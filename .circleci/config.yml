@@ -209,6 +209,9 @@ jobs:
             name: Configure server
             command: |
               cd .circleci/ansible
+              mv inventory.txt.example inventory.txt  # Rename the example inventory file
+              echo "backend ansible_host=${BACKEND_IP}" >> inventory.txt  # Append the backend IP
+              ansible-playbook -i inventory.txt configure-server.yml
               ansible-playbook -i inventory.txt configure-server.yml
         - destroy-environment
 
