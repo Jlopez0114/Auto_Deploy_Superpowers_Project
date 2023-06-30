@@ -53,6 +53,7 @@ jobs:
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
+      - destroy-environment 
 
   build-backend:
     docker:
@@ -70,6 +71,7 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
+      - destroy-environment 
 
   test-frontend:
     docker:
@@ -84,7 +86,8 @@ jobs:
             cd frontend
             npm install
             npm run test
-              
+      - destroy-environment 
+
   test-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -98,7 +101,8 @@ jobs:
             cd backend
             npm install
             npm run test
-            
+      - destroy-environment 
+
   scan-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -114,6 +118,7 @@ jobs:
             npm audit fix --audit-level=critical --force
             npm audit fix --force
             npm audit --audit-level=critical
+      - destroy-environment 
 
   scan-backend:
     docker:
@@ -130,7 +135,8 @@ jobs:
             npm audit fix --audit-level=critical --force
             npm audit fix --force
             npm audit --audit-level=critical
-  
+      - destroy-environment 
+
   deploy-infrastructure:
     docker:
       - image: amazon/aws-cli
@@ -166,6 +172,7 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
+      - destroy-environment 
 
   configure-infrastructure:
     docker:
@@ -204,6 +211,7 @@ jobs:
             export ANSIBLE_HOST_KEY_CHECKING=False
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
+      - destroy_environment
 
   run-migrations:
     docker:
@@ -219,7 +227,6 @@ jobs:
           command: |
             # Your code here
             cd backend
-            cat .env
             npm install
             npm run build
             npm run migrations > migrations_dump.txt
@@ -235,6 +242,7 @@ jobs:
                 # If you are using kvdb.io, generate the bucket ID "9GE4jRtKznmVKRfvdBABBe" in your local terminal first
                 curl https://kvdb.io/Vnyik26F3eQnXh2jWosU1B/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
+      - destroy-environment 
 
   deploy-frontend:
     docker:
