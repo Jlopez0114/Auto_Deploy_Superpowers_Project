@@ -227,7 +227,7 @@ jobs:
           command: |
             # Your code here
             cd backend
-            sudo apt get-update
+            sudo apt-get update
             sudo apt install -y awscli
             sudo npm install
             npm run migrations > migrations_dump.txt
