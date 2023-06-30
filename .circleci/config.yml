@@ -12,7 +12,7 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
-            aws cloudformation delete-stack --stack-name myStack-${CIRCLE_WORKFLOW_ID}
+            aws cloudformation delete-stack --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:7}
             exit 1
 
   revert-migrations:
@@ -53,7 +53,6 @@ jobs:
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
-      - destroy-environment 
 
   build-backend:
     docker:
@@ -71,7 +70,6 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
-      - destroy-environment 
 
   test-frontend:
     docker:
@@ -86,7 +84,6 @@ jobs:
             cd frontend
             npm install
             npm run test
-      - destroy-environment 
 
   test-backend:
     docker:
@@ -101,7 +98,6 @@ jobs:
             cd backend
             npm install
             npm run test
-      - destroy-environment 
 
   scan-frontend:
     docker:
@@ -118,7 +114,6 @@ jobs:
             npm audit fix --audit-level=critical --force
             npm audit fix --force
             npm audit --audit-level=critical
-      - destroy-environment 
 
   scan-backend:
     docker:
@@ -135,7 +130,6 @@ jobs:
             npm audit fix --audit-level=critical --force
             npm audit fix --force
             npm audit --audit-level=critical
-      - destroy-environment 
 
   deploy-infrastructure:
     docker:
@@ -172,25 +166,57 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      - destroy-environment 
 
-
+  configure-infrastructure:
+      docker:
+        # Docker image here that supports Ansible
+        - image: python:3.11-rc-alpine
+          environment:
+            ENVIRONMENT: "production"
+            TYPEORM_CONNECTION: $TYPEORM_CONNECTION
+            TYPEORM_HOST: $TYPEORM_HOST
+            TYPEORM_USERNAME: $TYPEORM_USERNAME
+            TYPEORM_PASSWORD: $TYPEORM_PASSWORD
+            TYPEORM_DATABASE: $TYPEORM_DATABASE
+            TYPEORM_PORT: $TYPEORM_PORT
+            TYPEORM_ENTITIES: $TYPEORM_ENTITIES
+      steps:
+        - checkout
+        # Checkout code from git
+        # Add ssh keys with fingerprint
+        - add_ssh_keys:
+            fingerprints: ["28:c0:e4:4f:80:81:b3:70:5c:cb:7a:63:2c:58:9b:7c"]
+        # attach workspace
+        - attach_workspace:
+            at: ~/
+        - run:
+            name: Install dependencies
+            command: |
+              apk add curl
+              apk add --update tar gzip ansible
+              pip install awscli
+        - run:
+            name: Configure server
+            command: |
+              cat .circleci/ansible/inventory.txt
+              export ANSIBLE_HOST_KEY_CHECKING=False
+              export RECORD_HOST_KEYS=False
+              export ANSIBLE_PARAMIKO_BANNER_TIMEOUT=30   
+              echo ENVIROMENT=production > "backend/.env"      
+              echo TYPEORM_CONNECTION=postgres >> "backend/.env"
+              echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
+              echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"          
+              echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"      
+              echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"            
+              echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"      
+              echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"     
+              echo "CONTENT OF backend/.env"      
+              cat backend/.env   
+              cd .circleci/ansible
+              ansible-playbook -i inventory.txt configure-server.yml
+        - destroy-environment
 
 workflows:
   default:
     jobs:
-      - build-frontend
-      - build-backend
-      - test-frontend:
-         requires: [build-frontend]
-      - test-backend:
-          requires: [build-backend]
-      - scan-backend:
-          requires: [build-backend]
-      - scan-frontend:
-          requires: [build-frontend]
-      - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-          filters:
-            branches:
-              only: [master]
+      - configure-infrastructure
