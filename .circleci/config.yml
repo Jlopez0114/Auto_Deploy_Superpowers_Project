@@ -156,20 +156,10 @@ jobs:
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
       - run:
-          name: creating backend ip variable
-          command: |
-            BACKEND_IP=$(aws ec2 describe-instances \
-              --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --output text)
-      - run:
           name: Add back-end ip to ansible inventory
           command: |
-            BACKEND_IP=$(aws ec2 describe-instances \
-              --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --output text)
-            echo "$BACKEND_IP=${BACKEND_IP}" >> .circleci/ansible/inventory.txt &&
+            BACKEND_PUBLIC_IP=$(aws --region us-east-1 ec2 describe-instances --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --query 'Reservations[*].Instances[*].PublicDnsName' --output text)
+            echo $BACKEND_PUBLIC_IP >> .circleci/ansible/inventory.txt
             cat .circleci/ansible/inventory.txt
       - persist_to_workspace:
           root: ~/
@@ -209,11 +199,6 @@ jobs:
             name: Configure server
             command: |
               cd .circleci/ansible
-              mv inventory.txt inventory.tmp  # Rename the example inventory file
-              echo "[backend]" > inventory.txt  # Create a new inventory file
-              echo "backend ansible_host=${BACKEND_IP}" >> inventory.txt  # Append the backend IP
-              cat inventory.tmp >> inventory.txt  # Append the rest of the inventory from the temporary file
-              rm inventory.tmp  # Remove the temporary file
               ansible-playbook -i inventory.txt configure-server.yml
         - destroy-environment
 
