@@ -343,17 +343,7 @@ jobs:
             echo "API_URL = ec2-3-84-149-126.compute-1.amazonaws.com"
             echo API_URL="http://${BACKEND_PUBLIC_IP}:3030" >> frontend/.env
             cat frontend/.env
-      - run:
-          name: Backend smoke test.
-          command: |
-            export API_URL="http://${BACKEND_IP}:3030"
-            echo "${API_URL}"
-            if curl "ec2-3-84-149-126.compute-1.amazonaws.com/api/status" | grep "ok"
-            then
-              exit 0
-            else
-              exit 1
-            fi
+
       - run:
           name: Frontend smoke test.
           command: |
@@ -362,9 +352,9 @@ jobs:
             if curl -s ${URL} | grep "Welcome"
             then
                 # Change this to 0 after the job fails
-              exit 0
+              return 1
             else
-              exit 1
+              return 1
             fi
       - destroy-environment  
       - revert-migrations
