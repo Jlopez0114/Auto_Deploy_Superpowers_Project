@@ -239,16 +239,13 @@ jobs:
           command: |
             # Your code here
             cd backend
-            npm install
-            npm run build
-            npm audit fix --audit-level=critical --force
-            npm audit --audit-level=critical
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
       - run:
           name: Send migration results to memstash
           command: |
             # Your code here
+            cd backend
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
                 # If you are using memstash.io, generate the token "7933fe63-4687-4fa1-8426-aa25aa1730ec" on the website
@@ -261,18 +258,17 @@ jobs:
   deploy-frontend:
     docker:
       # Docker image here that supports AWS CLI
-      - image: amazon/aws-cli
+      - image: python:3.7-alpine3.11
     steps:
       # Checkout code from git
       - checkout
-      - restore_cache:
-          keys: [frontend-build]
+      - attach_workspace:
+          at: ~/
       - run:
           name: Install dependencies
           command: |
-            yum install -y tar gzip curl
-            curl -sL https://rpm.nodesource.com/setup_10.x | bash -
-            yum install -y nodejs
+            apk add --update curl nodejs npm ansible zip
+            pip install awscli
       - run:
           name: Get backend url
           command: |
