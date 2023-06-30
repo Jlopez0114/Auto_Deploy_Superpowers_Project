@@ -165,9 +165,9 @@ jobs:
             echo $BACKEND_IP >> .circleci/ansible/inventory.txt &&
             cat .circleci/ansible/inventory.txt
       - persist_to_workspace:
-          root: ~/
+          root: ~/home/jlopez01
           paths:
-            - /home/jlopez01/Auto_Deploy_Superpowers_Project/.circleci/ansible/inventory.txt
+            - Auto_Deploy_Superpowers_Project/.circleci/ansible/inventory.txt
             
   configure-infrastructure:
       docker:
