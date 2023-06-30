@@ -244,8 +244,45 @@ jobs:
                 # If you are using kvdb.io, generate the bucket ID "9GE4jRtKznmVKRfvdBABBe" in your local terminal first
                 curl https://kvdb.io/Vnyik26F3eQnXh2jWosU1B/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
+      
+  deploy-frontend:
+    docker:
+      # Docker image here that supports AWS CLI
+      - image: python:3.7-alpine3.11
+    steps:
+      # Checkout code from git
+      - checkout
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update curl nodejs npm ansible zip
+            pip install awscli
+      - run:
+          name: Get backend url
+          command: |
+            export BACKEND_PUBLIC_IP=$(aws --region us-east-1 ec2 describe-instances --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --query 'Reservations[*].Instances[*].PublicDnsName' --output text)
+            export API_URL="http://${BACKEND_PUBLIC_IP}:3030"
+            echo "API_URL = ec2-3-84-149-126.compute-1.amazonaws.com"
+            echo API_URL="http://${BACKEND_PUBLIC_IP}:3030" >> frontend/.env
+            cat frontend/.env
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/frontend/.env
+      - run:
+          name: Deploy frontend objects
+          command: |
+            cd frontend
+            npm install
+            npm run build
+            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
+            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+      - revert-migrations
+
 
 workflows:
   default:
     jobs:
-      - run-migrations
+      - deploy-frontend
