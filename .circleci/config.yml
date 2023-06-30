@@ -209,8 +209,11 @@ jobs:
             name: Configure server
             command: |
               cd .circleci/ansible
-              mv inventory.txt inventory.txt  # Rename the example inventory file
+              mv inventory.txt inventory.tmp  # Rename the example inventory file
+              echo "[backend]" > inventory.txt  # Create a new inventory file
               echo "backend ansible_host=${BACKEND_IP}" >> inventory.txt  # Append the backend IP
+              cat inventory.tmp >> inventory.txt  # Append the rest of the inventory from the temporary file
+              rm inventory.tmp  # Remove the temporary file
               ansible-playbook -i inventory.txt configure-server.yml
         - destroy-environment
 
@@ -393,3 +396,7 @@ workflows:
           filters:
             branches:
               only: [master]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
