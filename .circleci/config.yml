@@ -209,9 +209,8 @@ jobs:
             name: Configure server
             command: |
               cd .circleci/ansible
-              mv inventory.txt.example inventory.txt  # Rename the example inventory file
+              mv inventory.txt inventory.txt  # Rename the example inventory file
               echo "backend ansible_host=${BACKEND_IP}" >> inventory.txt  # Append the backend IP
-              ansible-playbook -i inventory.txt configure-server.yml
               ansible-playbook -i inventory.txt configure-server.yml
         - destroy-environment
 
@@ -265,10 +264,10 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            export BACKEND_PUBLIC_IP=$(aws --region us-east-1 ec2 describe-instances --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --query 'Reservations[*].Instances[*].PublicDnsName' --output text)
-            export API_URL="http://${BACKEND_PUBLIC_IP}:3030"
-            echo "API_URL = ec2-3-84-149-126.compute-1.amazonaws.com"
-            echo API_URL="http://${BACKEND_PUBLIC_IP}:3030" >> frontend/.env
+            export BACKEND_IP=$(aws --region us-east-1 ec2 describe-instances --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "API_URL ="${BACKEND_IP}.com"
+            echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
             cat frontend/.env
       - persist_to_workspace:
           root: ~/
@@ -396,3 +395,5 @@ workflows:
               only: [master]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
