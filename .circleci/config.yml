@@ -27,13 +27,14 @@ commands:
           # Add when this will run
           when: on_fail
           command: |
-            SUCCESS=$(curl --insecure  https://kvdb.io/${KVDB_BUCKET_ID}/migration_<< parameters.Workflow_ID >>)
-            if(( $SUCCESS==1 )); 
+            SUCCESS=$(curl --insecure  https://kvdb.io/Vnyik26F3eQnXh2jWosU1B/migration_<< parameters.workflow_id >>)
+				    # Logic for reverting the database state
+            if (( $SUCCESS == 1 ));
             then
               cd ~/project/backend
               npm install
               npm run migration:revert
-            fi
+            fi  
             
 jobs:
   build-frontend:
