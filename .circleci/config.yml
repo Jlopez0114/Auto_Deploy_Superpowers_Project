@@ -343,7 +343,17 @@ jobs:
             echo "API_URL = ec2-3-84-149-126.compute-1.amazonaws.com"
             echo API_URL="http://${BACKEND_PUBLIC_IP}:3030" >> frontend/.env
             cat frontend/.env
-
+      - run:
+          name: Backend smoke test.
+          command: |
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "${API_URL}"
+            if curl "ec2-3-84-149-126.compute-1.amazonaws.com/api/status" | grep "ok"
+            then
+              return 0
+            else
+              return 1
+            fi
       - run:
           name: Frontend smoke test.
           command: |
@@ -363,7 +373,9 @@ jobs:
 workflows:
   default:
     jobs:
-      - deploy-frontend
-      - deploy-backend
+      - deploy-frontend:
+          requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
       - smoke-test:
           requires: [deploy-backend, deploy-frontend]
