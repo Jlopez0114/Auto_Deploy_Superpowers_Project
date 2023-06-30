@@ -191,7 +191,7 @@ jobs:
             fingerprints: ["28:c0:e4:4f:80:81:b3:70:5c:cb:7a:63:2c:58:9b:7c"]
         # attach workspace
         - attach_workspace:
-            at: .circleci/ansible
+            at: ~/
         - run:
             name: Install dependencies
             command: |
