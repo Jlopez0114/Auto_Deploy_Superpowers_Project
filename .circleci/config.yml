@@ -167,7 +167,7 @@ jobs:
       - persist_to_workspace:
           root: ~/
           paths:
-            - .circleci/ansible/inventory.txt
+            - /home/jlopez01/Auto_Deploy_Superpowers_Project/.circleci/ansible/inventory.txt
             
   configure-infrastructure:
       docker:
