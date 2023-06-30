@@ -229,7 +229,6 @@ jobs:
           command: |
             # Your code here
             cd backend
-            nvm install v13.8.0
             npm install
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
