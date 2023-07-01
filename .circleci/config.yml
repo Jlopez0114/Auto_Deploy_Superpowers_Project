@@ -164,7 +164,7 @@ jobs:
       - persist_to_workspace:
           root: ~/
           paths:
-            - project/.circleci/ansible/inventory.txt
+            - Auto_Deploy_Superpowers_Project/.circleci/ansible/inventory.txt
             
 
   configure-infrastructure:
@@ -179,7 +179,7 @@ jobs:
             fingerprints: ["28:c0:e4:4f:80:81:b3:70:5c:cb:7a:63:2c:58:9b:7c"]
         # attach workspace
         - attach_workspace:
-            at: .circleci/ansible
+            at: ~/
         - run:
             name: Install dependencies
             command: |
