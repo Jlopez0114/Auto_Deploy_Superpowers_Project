@@ -162,7 +162,7 @@ jobs:
             echo "$BACKEND_PUBLIC_IP=${BACKEND_PUBLIC_IP}" >> .circleci/ansible/inventory.txt
             cat .circleci/ansible/inventory.txt
       - attach_workspace:
-          root: ~/project/.circleci/ansible/inventory.txt
+          at: ~/project/.circleci/ansible/inventory.txt
             
 
   configure-infrastructure:
