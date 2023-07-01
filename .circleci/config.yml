@@ -290,18 +290,24 @@ jobs:
       - run:
           name: Install node
           command: |
-            sudo apt install --update nodejs nodejs-npm
+            sudo apt update
+            sudo apt upgrade
+            sudo apt install nodejs nodejs-npm
             node --version
             npm --version
       - run:
           name: Install ansible
           command: |
             # your code here
-            sudo apt install --update ansible
+            sudo apt update
+            sudo apt upgrade
+            sudo apt install ansible
             ansible --version
       - run:
           name: Install aws
           command: |
+            sudo apt update
+            sudo apt upgrade
             pip install awscli --upgrade
             aws --version
       - run:
