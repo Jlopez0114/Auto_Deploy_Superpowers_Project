@@ -283,16 +283,16 @@ jobs:
           name: Install dependencies
           command: |
             sudo apt update
-            sudo apt upgrade
-            sudo apt install unzip
-            sudo apt install curl
+            sudo apt upgrade -y
+            sudo apt install -y unzip
+            sudo apt install -y curl
             pip install --upgrade pip
       - run:
           name: Install node
           command: |
             sudo apt update
-            sudo apt upgrade
-            sudo apt install nodejs nodejs-npm
+            sudo apt upgrade -y
+            sudo apt install -y nodejs npm
             node --version
             npm --version
       - run:
@@ -300,15 +300,15 @@ jobs:
           command: |
             # your code here
             sudo apt update
-            sudo apt upgrade
-            sudo apt install ansible
+            sudo apt upgrade -y
+            sudo apt install -y ansible
             ansible --version
       - run:
           name: Install aws
           command: |
             sudo apt update
-            sudo apt upgrade
-            pip install awscli --upgrade
+            sudo apt upgrade -y
+            pip install -y awscli --upgrade
             aws --version
       - run:
           name: Deploy backend
