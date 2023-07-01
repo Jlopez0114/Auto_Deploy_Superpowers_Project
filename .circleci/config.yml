@@ -164,7 +164,7 @@ jobs:
       - persist_to_workspace:
           root: ~/
           paths:
-            - .circleci/ansible/inventory.txt
+            - project/.circleci/ansible/inventory.txt
             
 
   configure-infrastructure:
@@ -189,6 +189,7 @@ jobs:
         # attach workspace
         - attach_workspace:
             at: ~/
+            path: project/.circleci/ansible/inventory.txt
         - run:
             name: Install dependencies
             command: |
