@@ -158,7 +158,7 @@ jobs:
       - run:
           name: Add back-end ip to ansible inventory
           command: |
-            BACKEND_PUBLIC_IP=$(aws --region us-east-1 ec2 describe-instances --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --query 'Reservations[*].Instances[*].PublicDnsName' --output text)
+            BACKEND_PUBLIC_IP=$(aws --region us-east-1 ec2 describe-instances --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
             echo $BACKEND_PUBLIC_IP >> .circleci/ansible/inventory.txt
             cat .circleci/ansible/inventory.txt
       - persist_to_workspace:
@@ -171,15 +171,6 @@ jobs:
       docker:
         # Docker image here that supports Ansible
         - image: python:3.11-rc-alpine
-          environment:
-            ENVIRONMENT: "production"
-            TYPEORM_CONNECTION: $TYPEORM_CONNECTION
-            TYPEORM_HOST: $TYPEORM_HOST
-            TYPEORM_USERNAME: $TYPEORM_USERNAME
-            TYPEORM_PASSWORD: $TYPEORM_PASSWORD
-            TYPEORM_DATABASE: $TYPEORM_DATABASE
-            TYPEORM_PORT: $TYPEORM_PORT
-            TYPEORM_ENTITIES: $TYPEORM_ENTITIES
       steps:
         - checkout
         # Checkout code from git
@@ -188,8 +179,7 @@ jobs:
             fingerprints: ["28:c0:e4:4f:80:81:b3:70:5c:cb:7a:63:2c:58:9b:7c"]
         # attach workspace
         - attach_workspace:
-            at: ~/
-            path: project/.circleci/ansible/inventory.txt
+            at: .circleci/ansible
         - run:
             name: Install dependencies
             command: |
@@ -200,7 +190,12 @@ jobs:
             name: Configure server
             command: |
               cd .circleci/ansible
+              cat inventory.txt
               ansible-playbook -i inventory.txt configure-server.yml
+        - persist_to_workspace:
+            root: ~/
+            paths:
+              - project/backend
         - destroy-environment
 
   run-migrations:
