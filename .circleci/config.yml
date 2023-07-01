@@ -282,22 +282,22 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk update
-            apk upgrade
-            apk add unzip
-            apk add curl
+            apt update
+            apt upgrade
+            apt install unzip
+            apt install curl
             /usr/local/bin/python -m pip install --upgrade pip
       - run:
           name: Install node
           command: |
-            apk add --update nodejs nodejs-npm
+            apt install --update nodejs nodejs-npm
             node --version
             npm --version
       - run:
           name: Install ansible
           command: |
             # your code here
-            apk add --update ansible
+            apt install --update ansible
             ansible --version
       - run:
           name: Install aws
