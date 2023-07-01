@@ -165,7 +165,9 @@ jobs:
             echo "backend ansible_host=${BACKEND_IP}" >> inventory.txt
             cat .circleci/ansible/inventory.txt
       - persist_to_workspace:
-          path: project/.circleci/ansible/inventory.txt
+          root: ~/
+          path: 
+            - project/.circleci/ansible/inventory.txt
             
 
   configure-infrastructure:
