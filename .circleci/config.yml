@@ -308,7 +308,7 @@ jobs:
           command: |
             sudo apt update
             sudo apt upgrade -y
-            pip install -y awscli --upgrade
+            pip install awscli --upgrade
             aws --version
       - run:
           name: Deploy backend
