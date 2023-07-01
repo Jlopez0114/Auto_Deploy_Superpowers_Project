@@ -164,7 +164,7 @@ jobs:
       - persist_to_workspace:
           root: ~/
           paths:
-            - Auto_Deploy_Superpowers_Project/.circleci/ansible/inventory.txt
+            - project/.circleci/ansible/inventory.txt
             
 
   configure-infrastructure:
@@ -192,10 +192,6 @@ jobs:
               cd .circleci/ansible
               cat inventory.txt
               ansible-playbook -i inventory.txt configure-server.yml
-        - persist_to_workspace:
-            root: ~/
-            paths:
-              - project/backend
         - destroy-environment
 
   run-migrations:
