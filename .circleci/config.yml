@@ -286,6 +286,7 @@ jobs:
             sudo apt upgrade -y
             sudo apt install -y unzip
             sudo apt install -y curl
+            sudo apt install -y openssh-client
             pip install --upgrade pip
       - run:
           name: Install node
@@ -322,6 +323,7 @@ jobs:
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
+            ansible_ssh_common_args='-o StrictHostKeyChecking=no'
             ansible-playbook -i inventory.txt deploy-backend.yml
       - destroy-environment  
       - revert-migrations
