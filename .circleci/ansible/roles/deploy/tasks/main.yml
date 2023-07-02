@@ -18,6 +18,13 @@
     name: nodejs
     state: present
 
+- name: Install pm2
+  become: True
+  npm:
+    name: pm2
+    global: yes
+    
+
 
 - name: create directory 
   become: true
