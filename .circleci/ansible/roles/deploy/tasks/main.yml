@@ -44,12 +44,6 @@
   args:
     chdir: /home/ubuntu/backend
 
-- name: "compile npm packages"
-  become: true
-  command: npm run build
-  args:
-    chdir: /home/ubuntu/backend
-
 - name: Executing node
   become: true
   shell: |
@@ -59,7 +53,6 @@
     pm2 start npm -- start
 
 - name: "start server"
-  become: true
-  command: pm2 start npm -- run start
+  command: npm run start
   args:
-    chdir: /home/ubuntu/backend/dist
+    chdir: /home/ubuntu/backend
