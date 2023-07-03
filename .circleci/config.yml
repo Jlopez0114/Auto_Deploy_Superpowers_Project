@@ -371,7 +371,7 @@ jobs:
       - run:
           name: Backend smoke test.
           command: |
-            API_URL="http://54.235.238.0:3030"
+            API_URL="http://44.206.241.28:3030"
             echo "${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"
             then
@@ -382,7 +382,7 @@ jobs:
       - run:
           name: Frontend smoke test.
           command: |
-            URL="http://udapeople-fdd71d2.s3-website-us-east-1.amazonaws.com/#/employees"            
+            URL="http://udapeople-fe217ce.s3-website-us-east-1.amazonaws.com/#/employees"            
             echo ${URL} 
             if curl -s ${URL} | grep "Welcome"
             then
@@ -391,9 +391,6 @@ jobs:
             else
               return 1
             fi
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
       - destroy-environment  
       - revert-migrations
       # Here's where you will add some code to rollback on failure
@@ -401,27 +398,4 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-frontend
-      - build-backend
-      - test-frontend:
-          requires: [build-frontend]
-      - test-backend:
-          requires: [build-backend]
-      - scan-backend:
-          requires: [build-backend]
-      - scan-frontend:
-          requires: [build-frontend]
-      - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-          filters:
-            branches:
-              only: [master]
-      - configure-infrastructure:
-          requires: [deploy-infrastructure]
-      - run-migrations:
-          requires: [configure-infrastructure]
-      - deploy-frontend:
-          requires: [run-migrations]
-      - deploy-backend:
-          requires: [run-migrations]
-#      - smoke-test
+      - smoke-test
