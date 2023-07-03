@@ -353,7 +353,9 @@ jobs:
           name: Install dependencies
           command: |
             apk add jq tar gzip git curl
+            apk add --update nodejs npm
             apk add --update py3-pip && pip3 install --upgrade pip && pip3 install awscli
+            pip install awscli
       - run:
           name: Backend smoke test.
           command: |
