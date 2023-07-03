@@ -52,7 +52,3 @@
     pm2 stop default
     pm2 start npm -- start
 
-- name: "start server"
-  command: npm run start
-  args:
-    chdir: /home/ubuntu/backend
