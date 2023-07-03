@@ -32,13 +32,6 @@
     src: ~/project/artifact.tar.gz
     dest: /home/ubuntu/backend/artifact.tar.gz
 
-- name: "copy backend file"
-  become: true
-  copy:
-    src: /root/project/backend
-    dest: /root
-    force: no
-
 - name: "install npm packages"
   become: true
   command: npm install
