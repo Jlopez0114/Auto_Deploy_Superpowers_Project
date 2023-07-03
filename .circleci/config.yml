@@ -360,7 +360,6 @@ jobs:
             API_URL="http://44.211.255.140:3030"
             echo "${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"
-            if curl -s "http://44.211.255.140/api/status" | grep "ok"
             then
               return 0
             else
