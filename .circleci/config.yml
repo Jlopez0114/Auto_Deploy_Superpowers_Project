@@ -217,7 +217,7 @@ jobs:
   run-migrations:
     docker:
       # Docker image here that supports NodeJS
-      - image: circleci/node:13.8.0
+      - image: circleci/node:14.18.1
     steps:
       # Checkout code from git
       - checkout
@@ -230,6 +230,9 @@ jobs:
             cd backend
             npm install
             npm audit fix --audit-level=critical --force
+            npm audit fix --force
+            npm audit --audit-level=critical
+            npm audit fix
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
       - run:
