@@ -185,7 +185,7 @@ jobs:
         # Checkout code from git
         # Add ssh keys with fingerprint
         - add_ssh_keys:
-            fingerprints: ["28:c0:e4:4f:80:81:b3:70:5c:cb:7a:63:2c:58:9b:7c"]
+            fingerprints: ["50:ed:7a:bf:d1:f8:c3:7f:6e:72:eb:2e:01:ef:c1:8a"]
         # attach workspace
         - attach_workspace:
             at: ~/
@@ -287,7 +287,7 @@ jobs:
       - checkout       
       # Add ssh keys with fingerprint
       - add_ssh_keys:
-          fingerprints: ["28:c0:e4:4f:80:81:b3:70:5c:cb:7a:63:2c:58:9b:7c"]
+          fingerprints: ["50:ed:7a:bf:d1:f8:c3:7f:6e:72:eb:2e:01:ef:c1:8a"]
       # attach workspace
       - attach_workspace:
           at: ~/
@@ -375,7 +375,7 @@ jobs:
             if curl -s ${URL} | grep "Welcome"
             then
                 # Change this to 0 after the job fails
-              exit 0
+              exit 1
             else
               exit 1
             fi
