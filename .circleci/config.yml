@@ -35,7 +35,7 @@ commands:
           command: |
             SUCCESS=$(curl --insecure  https://kvdb.io/Vnyik26F3eQnXh2jWosU1B/migration_${CIRCLE_WORKFLOW_ID:0:7})
             # Logic for reverting the database state
-            if (( $SUCCESS == 1 ));
+            if [ "$SUCCESS" == "1" ];
             then
               cd ~/project/backend
               npm install

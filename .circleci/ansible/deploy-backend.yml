@@ -22,6 +22,6 @@
         TYPEORM_USERNAME=postgres     
         TYPEORM_PASSWORD=mypassword
         TYPEORM_DATABASE=udapeople_prod
-        TYPEORM_HOST=database-1.cwwrapv42rtb.us-east-1.rds.amazonaws.com
+        TYPEORM_HOST=udapeople-bleedprod.c9x9nxt1oxxy.us-east-1.rds.amazonaws.com
   roles:
     - deploy
