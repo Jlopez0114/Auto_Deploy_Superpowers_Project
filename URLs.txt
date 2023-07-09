@@ -2,5 +2,5 @@ URL01 - Github URL
 https://github.com/Jlopez0114/Auto_Deploy_Superpowers_Project
 
 URL02 - S3 public URL
-http://udapeople-e55e46e.s3-website-us-east-1.amazonaws.com
+http://udapeople-0bc7965.s3-website-us-east-1.amazonaws.com
 
